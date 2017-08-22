@@ -1,29 +1,48 @@
 package recorder
 
 import (
-	"net/http"
-	"fmt"
 	"encoding/gob"
+	"fmt"
 	"os"
+	"runtime"
+	"net/http"
 )
+
 type Casette struct {
-	Encoder gob.Encoder
-	Decoder gob.Decoder
+	Requests [] http.Request
+	path string
 }
 
-func NewCasette(path string) (Casette , error){
+func NewCasette(path string) Casette {
+	return Casette{path: path}
+}
+
+// Encode via Gob to file
+func Save(path string, object interface{}) error {
 	file, err := os.Create(path)
-	if err != nil{
-		return nil, err
-
+	if err == nil {
+		encoder := gob.NewEncoder(file)
+		encoder.Encode(object)
 	}
-	en := gob.Encoder{}
-	return Casette{}
+	file.Close()
+	return err
 }
 
-func (c *Casette) Put (req http.Request) (){
-
+// Decode Gob file
+func Load(path string, object interface{}) error {
+	file, err := os.Open(path)
+	if err == nil {
+		decoder := gob.NewDecoder(file)
+		err = decoder.Decode(object)
+	}
+	file.Close()
+	return err
 }
-func (c *Casette) load() ([]http.Request, error){
 
+func Check(e error) {
+	if e != nil {
+		_, file, line, _ := runtime.Caller(1)
+		fmt.Println(line, "\t", file, "\n", e)
+		os.Exit(1)
+	}
 }

@@ -2,11 +2,21 @@ package recorder
 
 import (
 	"testing"
-	"fmt"
 )
 
-func TestNewCasette(t *testing.T) {
-	a := NewCasette("tmp/fuga.gob")
-	fmt.Printf("%+v", a)
+const file = "/tmp/test.gob"
 
+type User struct{
+	Name string
+}
+
+func TestNewCasette(t *testing.T) {
+	var datato = &User{"Donald"}
+	var datafrom = new(User)
+
+	c, err := NewCasette(file)
+	c.Save(datato)
+
+	err := Save(file, datato)
+	Check(err)
 }
