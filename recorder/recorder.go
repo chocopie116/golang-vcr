@@ -1,7 +1,9 @@
-package main
+package recorder
 
-import "fmt"
+type Recorder struct {
 
-func main() {
-	fmt.Println("vim-go")
 }
+
+
+
+
